@@ -9,44 +9,69 @@
 	const weekDay = weekDays[curDayIndex];
 	const prepTime = 0.5;
 	const totalPrintTime = tasks.map(t=>t.hours).reduce((acc,next) => acc+next ,0);
-	
 	const pxPerHour = 20;
 
-	function fillDay(day) {
-		let i = 0;
-		while(i < tasks.length) {
-			const task = tasks[i];
-			task.prepTime = task.prepTime ?? prepTime;
+	let newTask = undefined;
 
-			if (day.timeLeft >= (task.hours + task.prepTime)) {
-				// console.log('adding', task)
-				day.add(task);
-				tasks.splice(i,1);
-			}
-			else {
-				// console.log('skipping', task)
-				i++;
-			}
-		}
-	}
+	let plannedDays = [];
 
 	function allocateTasks() {
-		const days = [];
-		while (tasks.length) {
-			let curDay = new Day(8)
-			days.push(curDay);
-
-			fillDay(curDay);
+		plannedDays = [];
+		for (const task of tasks) {
+			
+			let day = findDay(task);
+			if (!day) {
+				day = new Day(8);
+				plannedDays.push(day);
+				plannedDays = plannedDays;
+			}
+			allocate(task, day);
 		}
-
-		return days;
 	}
 
-	const plannedDays = allocateTasks();
+	function allocate(task, day) {
+		console.log('allocating', task, day)
+		const i = tasks.findIndex(t=>t === task);
+		if (i == -1) throw new Error('cannot find task')
+		task.prepTime = task.prepTime ?? prepTime;
+		day.add(task);
+	}
+
+	function findDay(task) {
+		for(const day of plannedDays) {
+			console.log('for task' , task, ' considering day', day);
+			if (day.timeLeft >= (task.prepTime ?? prepTime) + task.hours) { // TODO: put preptime centrally 
+				return day;
+			}
+		}
+		return undefined;
+	}
+
+	allocateTasks();
 
 
 	function getWeekDay(index) {
 		return weekDays [(curDayIndex + index) % 7];
+	}
+
+	function showCreateTaskDialog() {
+		newTask = {
+			title: '',
+			hours: 1,
+			cssColors : 'red'
+		};
+	}
+
+	function closeCreateTaskDialog() {
+		newTask = undefined;
+	}
+
+	function createTask() {
+		tasks.push(newTask);
+		newTask = undefined;
+		allocateTasks();
+
+		tasks = tasks;
 	}
 </script>
 
@@ -56,7 +81,32 @@
 </svelte:head>
 
 <div class="text-column">
-	<h1>Print Schedule</h1>
+	
+	<button on:click={showCreateTaskDialog}>new task</button>
+	
+	{#if newTask}
+		<div class="glasspane" on:click={closeCreateTaskDialog} />
+		<div class="dialog">
+			<h3>Create new print task</h3>
+			<div>
+				<label>title</label><input type=text bind:value={newTask.title} />
+			</div>
+			<div>
+				<label>hours</label><input type=number bind:value={newTask.hours} min=0 />
+			</div>
+			<div>
+				<label>color</label>
+					<select bind:value={newTask.cssColor}>
+						{#each ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'brown', 'black', 'white', 'grey'] as color}
+							<option >{color}</option>
+						{/each}
+					</select>
+			</div>
+
+			<button on:click={closeCreateTaskDialog}>cancel</button>
+			<button on:click={createTask}>create task</button>
+		</div>
+	{/if}
 
 	<main>
 		{#each plannedDays as curDay, dayIndex}
@@ -81,10 +131,33 @@
 </div>
 
 <style>
+.glasspane {
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	top:0;
+	left:0;
+	background-color: rgba(0,0,0,0.5);
+}
+.dialog {
+	z-index: 1;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate3d(-50%,-50%,0);
+	background-color: lightgrey;
+	padding: 20px;
+}
+
+.dialog label {
+	width: 40px;
+}
+
 .task {
 	border: 1px solid black;
 	box-sizing: border-box;
 	overflow: hidden;
+	padding: 5px;
 }
 .day-box {
 
@@ -94,6 +167,7 @@
 .day {
 	xoverflow: hidden;
 	padding: 10px;
+
 }
 
 main {
