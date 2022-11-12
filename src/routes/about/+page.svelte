@@ -7,7 +7,7 @@
 	<h1>About this app</h1>
 
 	<p>
-		This is a simple print queue system that I wrote for my good friend Russell.
+		This is a simple scheduling system that I wrote for my good friend Russell.
 	</p>
 
 </div>

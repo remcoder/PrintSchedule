@@ -4,6 +4,9 @@
   import { Day } from './day';
 	import { tasks } from './testdata';
 
+ import { onMount } from 'svelte';
+
+// let tasks = [];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 	const curDayIndex = new Date().getDay();
 	const weekDay = weekDays[curDayIndex];
@@ -12,7 +15,7 @@
 	const pxPerHour = 20;
 
 	let newTask = undefined;
-
+	let curTask = undefined;
 	let plannedDays = [];
 
 	function allocateTasks() {
@@ -30,7 +33,7 @@
 	}
 
 	function allocate(task, day) {
-		console.log('allocating', task, day)
+		// console.log('allocating', task, day)
 		const i = tasks.findIndex(t=>t === task);
 		if (i == -1) throw new Error('cannot find task')
 		task.prepTime = task.prepTime ?? prepTime;
@@ -39,7 +42,7 @@
 
 	function findDay(task) {
 		for(const day of plannedDays) {
-			console.log('for task' , task, ' considering day', day);
+			// console.log('for task' , task, ' considering day', day);
 			if (day.timeLeft >= (task.prepTime ?? prepTime) + task.hours) { // TODO: put preptime centrally 
 				return day;
 			}
@@ -73,6 +76,25 @@
 
 		tasks = tasks;
 	}
+
+	function handleKeydown(evt) {
+		if (evt.key == 'd') {
+			handleDelete();
+		}
+	}
+
+	function handleDelete() {
+		if (curTask) {
+			// console.log(curTask, tasks)
+			const index= tasks.findIndex(t=>t===curTask);
+			tasks.splice(index,1);
+				allocateTasks();
+		}
+	}
+
+	onMount(() => {
+		document.addEventListener('keydown', handleKeydown);
+	});
 </script>
 
 <svelte:head>
@@ -82,7 +104,7 @@
 
 <div class="text-column">
 	
-	<button on:click={showCreateTaskDialog}>new task</button>
+	<button class="new-task" on:click={showCreateTaskDialog}>new task</button>
 	
 	{#if newTask}
 		<div class="glasspane" on:click={closeCreateTaskDialog} />
@@ -92,7 +114,7 @@
 				<label>title</label><input type=text bind:value={newTask.title} />
 			</div>
 			<div>
-				<label>hours</label><input type=number bind:value={newTask.hours} min=0 />
+				<label>hours</label><input type=number bind:value={newTask.hours} min=0 step=0.5 />
 			</div>
 			<div>
 				<label>color</label>
@@ -115,13 +137,16 @@
 			<div class="day" style="height: {pxPerHour * 8}px;">
 
 				{#each curDay.tasks as task}
-					<div class="task" style="background-color: {task.cssColor}; 
-					height: {task.hours*pxPerHour}px;
-					margin-top: {prepTime*pxPerHour}px">{task.title}<br>
-					time:{task.hours}</div>
+					<div class="task" class:hover={task == curTask} 
+						on:mouseenter={e=>curTask = task}
+						on:mouseleave={e=>curTask = undefined}
+						style="background-color: {task.cssColor}; 
+						height: {task.hours*pxPerHour}px;
+						margin-top: {prepTime*pxPerHour}px">{task.title}<br>
+					time:{task.hours}h</div>
 				{/each}
 			</div>
-				<div class="footer">day print time {curDay.allocatedTime}
+				<div class="footer">print time {curDay.allocatedTime}
 				time left {curDay.timeLeft}
 				</div>
 			</div>
@@ -131,6 +156,11 @@
 </div>
 
 <style>
+button.new-task {
+	margin-bottom: 60px;
+	max-width: 170px;
+}
+
 .glasspane {
 	position: absolute;
 	width: 100vw;
@@ -147,10 +177,19 @@
 	transform: translate3d(-50%,-50%,0);
 	background-color: lightgrey;
 	padding: 20px;
+
+	text-align: center;
 }
 
 .dialog label {
-	width: 40px;
+	display: inline-block;
+	width: 40%;
+	text-align:left;
+}
+
+.dialog select, .dialog input {
+	display: inline-block;
+	width: 40%;
 }
 
 .task {
@@ -159,10 +198,16 @@
 	overflow: hidden;
 	padding: 5px;
 }
-.day-box {
 
+.task.hover {
+	filter: brightness(150%);
+}
+
+.day-box {
 	margin-bottom: 40px;
+	margin-right: 20px;
 	background-color: lightgrey;
+	max-width: 270px;
 }
 .day {
 	xoverflow: hidden;
@@ -172,7 +217,7 @@
 
 main {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 }
 .footer {
 	font-size: 90%;

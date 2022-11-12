@@ -45,3 +45,5 @@ export const tasks = [
 		cssColor: 'green'
 	}
 ];
+
+// tasks.push(...tasks)
