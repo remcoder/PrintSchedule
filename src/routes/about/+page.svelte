@@ -1,0 +1,13 @@
+<svelte:head>
+	<title>About</title>
+	<meta name="description" content="About this app" />
+</svelte:head>
+
+<div class="text-column">
+	<h1>About this app</h1>
+
+	<p>
+		This is a simple print queue system that I wrote for my good friend Russell.
+	</p>
+
+</div>
