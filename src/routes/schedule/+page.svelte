@@ -4,8 +4,10 @@
   import { Day } from './day';
 	import { tasks as taskStore, removeTask, addTask, updateTask } from '$lib/stores';
 
+	import TaskDialog from '$lib/TaskDialog.svelte';
 	import { lookupColor } from '$lib/palette';
 	
+	let dialog ;
 	let tasks = [];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 	const curDayIndex = new Date().getDay();
@@ -17,8 +19,7 @@
 	// const totalPrintTime = tasks.map(t=>t.hours).reduce((acc,next) => acc+next ,0);
 	const pxPerHour = 30;
 
-	let newTask = undefined;
-	let editTask = undefined;
+	
 	let curTask = undefined;
 	let plannedDays = [];
 
@@ -65,23 +66,7 @@
 		return weekDays [(curDayIndex + index) % 7];
 	}
 
-	function showCreateTaskDialog() {
-		newTask = {
-			title: '',
-			hours: 1,
-			cssColors : 'red'
-		};
-	}
 
-	function closeCreateTaskDialog() {
-		newTask = undefined;
-		editTask = undefined;
-	}
-
-	function createTask() {
-		addTask(newTask);
-		newTask = undefined;
-	}
 
 	function handleKeydown(evt) {
 		// console.log(evt);
@@ -103,19 +88,7 @@
 		}
 	}
 
-	function showEditTaskDialog(task, dayIndex, taskIndex) {
-		console.log('editing', task);
-		
-		editTask = newTask = task;
-		// plannedDays[dayIndex].tasks[taskIndex]
-		// updateTask(task);
-	}
 
-	function saveTask() {
-		updateTask(editTask, newTask);
-		editTask = undefined;
-		newTask = undefined;
-	}
 	onMount(() => {
 		// TODO: remove in onDestroy?
 		document.addEventListener('keydown', handleKeydown);
@@ -136,35 +109,8 @@
 
 <div class="text-column">
 	<h1>Schedule</h1>
-	<button class="new-task" on:click={showCreateTaskDialog}>+ new task</button>
 	
-	{#if newTask}
-		<div class="glasspane" on:click={closeCreateTaskDialog} />
-		<div class="dialog">
-			<h3>{ editTask? 'Edit' : 'Create new'} print task</h3>
-			<div>
-				<label>title</label><input autofocus type=text bind:value={newTask.title} />
-			</div>
-			<div>
-				<label>hours</label><input type=number bind:value={newTask.hours} min=0 step=0.5 />
-			</div>
-			<div>
-				<label>color</label>
-					<select bind:value={newTask.cssColor}>
-						{#each ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'brown', 'black', 'white', 'grey'] as color}
-							<option >{color}</option>
-						{/each}
-					</select>
-			</div>
-
-			<button on:click={closeCreateTaskDialog}>cancel</button>
-			{#if editTask}
-				<button on:click={saveTask}>save task</button>
-			{:else}
-				<button on:click={createTask}>create task</button>
-			{/if}
-		</div>
-	{/if}
+	<TaskDialog bind:this={dialog} />
 
 	<main>
 		{#each plannedDays as curDay, dayIndex}
@@ -176,7 +122,7 @@
 					<div class="task" class:hover={task == curTask} 
 						on:mouseenter={e=>curTask = task}
 						on:mouseleave={e=>curTask = undefined}
-						on:click={ e=> showEditTaskDialog(curTask, dayIndex, taskIndex)}
+						on:click={ e=> dialog.showEditTaskDialog(curTask, dayIndex, taskIndex)}
 						style="background-color: {lookupColor(task.cssColor)}; 
 						height: {task.hours*pxPerHour}px;
 						margin-top: {prepTime*pxPerHour}px">
@@ -198,56 +144,6 @@
 </div>
 
 <style>
-button.new-task {
-	margin-bottom: 60px;
-	max-width: 170px;
-	background-color: #d290df;
-	border: 0;
-	padding: 8px;
-	border-radius: 20px;
-	color: white;
-	transition: transform 0.3s;
-}
-
-@keyframes hue-rotate {
-  from {filter: hue-rotate(0deg)}
-  to {filter: hue-rotate(360deg)}
-}
-
-button.new-task:hover {
-	transform: scale(1.1, 1.1) rotatez(-2deg);
-}
-
-.glasspane {
-	position: absolute;
-	width: 100vw;
-	height: 100vh;
-	top:0;
-	left:0;
-	background-color: rgba(0,0,0,0.5);
-}
-.dialog {
-	z-index: 1;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate3d(-50%,-50%,0);
-	background-color: lightgrey;
-	padding: 20px;
-
-	text-align: center;
-}
-
-.dialog label {
-	display: inline-block;
-	width: 40%;
-	text-align:left;
-}
-
-.dialog select, .dialog input {
-	display: inline-block;
-	width: 40%;
-}
 
 .task {
 	/* border-radius: 10px; */
