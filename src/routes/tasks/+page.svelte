@@ -151,13 +151,16 @@
 						style="background-color: {lookupColor(task.cssColor)}; 
 						height: {task.hours*pxPerHour}px;
 						margin-top: {prepTime*pxPerHour}px">
-						<!-- {task.title}<br>
-						time: {task.hours}h -->
+						{task.title}
+						<!-- time: {task.hours}h  -->
 						</div>
 				{/each}
 			</div>
-				<div class="footer">print time {curDay.allocatedTime}
-				time left {curDay.timeLeft}
+				<div class="footer">
+				{curDay.allocatedTime}h of print time 
+				<!-- {#if curDay.timeLeft}
+					{curDay.timeLeft}h unused
+				{/if} -->
 				</div>
 			</div>
 		{/each}
@@ -207,7 +210,7 @@ button.new-task {
 	/* border: 3px solid dimgrey; */
 	box-sizing: border-box;
 	overflow: hidden;
-	padding: 5px;
+	padding: 5px 0;
 	/* filter: brightness(250%) grayscale(30%); */
 	text-align:center;
 	color: white;
@@ -227,8 +230,11 @@ button.new-task {
 .day {
 	xoverflow: hidden;
 	background-color: #D9D9D9;
+	display: flex;
+	flex-direction: column;
 	/* outline: 1px solid black; */
 	/* padding: 10px; */
+	margin: 20px 0
 }
 
 main {
