@@ -12,6 +12,8 @@
 	const curDayIndex = new Date().getDay();
 	const weekDay = weekDays[curDayIndex];
 	const prepTime = 0.5;
+	const minDays = 5;
+	const dayLength = 12;
 	// const totalPrintTime = tasks.map(t=>t.hours).reduce((acc,next) => acc+next ,0);
 	const pxPerHour = 30;
 
@@ -25,12 +27,19 @@
 			
 			let day = findDay(task);
 			if (!day) {
-				day = new Day(8);
+				day = new Day(dayLength);
 				plannedDays.push(day);
-				plannedDays = plannedDays;
+				
 			}
 			allocate(task, day);
 		}
+
+		// console.log('planned', plannedDays.length);
+		while (plannedDays.length < minDays) {
+			plannedDays.push(new Day(dayLength));
+		}
+
+		plannedDays = plannedDays;
 	}
 
 	function allocate(task, day) {
@@ -99,7 +108,7 @@
 
 	$: { 
 		tasks = $taskStore;
-		console.log(tasks)
+		// console.log(tasks);
 		if (tasks)
 			allocateTasks(); 
 	}
@@ -142,7 +151,7 @@
 		{#each plannedDays as curDay, dayIndex}
 			<div class="day-box">
 			<header>{getWeekDay(dayIndex)} </header>
-			<div class="day" style="height: {pxPerHour * 8}px;">
+			<div class="day" style="height: {pxPerHour * dayLength}px;">
 
 				{#each curDay.tasks as task}
 					<div class="task" class:hover={task == curTask} 
@@ -172,6 +181,21 @@
 button.new-task {
 	margin-bottom: 60px;
 	max-width: 170px;
+	background-color: #d290df;
+	border: 0;
+	padding: 8px;
+	border-radius: 20px;
+	color: white;
+	transition: transform 0.3s;
+}
+
+@keyframes hue-rotate {
+  from {filter: hue-rotate(0deg)}
+  to {filter: hue-rotate(360deg)}
+}
+
+button.new-task:hover {
+	transform: scale(1.1, 1.1) rotatez(-2deg);
 }
 
 .glasspane {
@@ -213,8 +237,9 @@ button.new-task {
 	padding: 5px 0;
 	/* filter: brightness(250%) grayscale(30%); */
 	text-align:center;
-	color: white;
+	color: #eee;
 	font-size: 90%;
+	
 }
 
 .task.hover {
