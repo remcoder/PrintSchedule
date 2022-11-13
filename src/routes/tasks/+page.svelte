@@ -2,10 +2,12 @@
 <script>
 
   import { Day } from './day';
-	import { tasks } from './testdata';
 
- import { onMount } from 'svelte';
+  import { onMount } from 'svelte';
 
+  export let data = { tasks : [] };
+
+	let tasks = [];
 // let tasks = [];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 	const curDayIndex = new Date().getDay();
@@ -50,7 +52,7 @@
 		return undefined;
 	}
 
-	allocateTasks();
+
 
 
 	function getWeekDay(index) {
@@ -95,6 +97,13 @@
 	onMount(() => {
 		document.addEventListener('keydown', handleKeydown);
 	});
+
+	$: { 
+		tasks = data.tasks
+		console.log(data)
+		if (tasks)
+			allocateTasks(); 
+	}
 </script>
 
 <svelte:head>

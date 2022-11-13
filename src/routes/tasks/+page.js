@@ -1,9 +1,23 @@
-import { dev } from '$app/environment';
+export const csr = true;
 
-// we don't need any JS on this page, though we'll load
-// it in dev so that we get hot module replacement
-export const csr = dev;
+export const prerender = false;
 
-// since there's no dynamic data here, we can prerender
-// it so that it gets served as a static asset in production
-export const prerender = true;
+const url = '';
+const key = '';
+
+export async function getTasks() {
+	const resp = await fetch(url, {
+		headers: new Headers({
+			'X-Master-Key': key
+		})
+	});
+
+	return (await resp.json()).record;
+}
+
+/** @type {import('./$types').PageLoad} */
+export async function load() {
+	const res = await getTasks();
+	// console.log('res', res);
+	return res;
+}
