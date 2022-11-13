@@ -1,20 +1,16 @@
 
 <script>
-
-  import { Day } from './day';
-
   import { onMount } from 'svelte';
-
-  export let data = { tasks : [] };
+  import { Day } from './day';
+	import { tasks as taskStore, removeTask, addTask } from '$lib/stores';
 
 	let tasks = [];
-// let tasks = [];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 	const curDayIndex = new Date().getDay();
 	const weekDay = weekDays[curDayIndex];
 	const prepTime = 0.5;
-	const totalPrintTime = tasks.map(t=>t.hours).reduce((acc,next) => acc+next ,0);
-	const pxPerHour = 20;
+	// const totalPrintTime = tasks.map(t=>t.hours).reduce((acc,next) => acc+next ,0);
+	const pxPerHour = 30;
 
 	let newTask = undefined;
 	let curTask = undefined;
@@ -52,9 +48,6 @@
 		return undefined;
 	}
 
-
-
-
 	function getWeekDay(index) {
 		return weekDays [(curDayIndex + index) % 7];
 	}
@@ -72,35 +65,38 @@
 	}
 
 	function createTask() {
-		tasks.push(newTask);
+		addTask(newTask);
 		newTask = undefined;
-		allocateTasks();
-
-		tasks = tasks;
 	}
 
 	function handleKeydown(evt) {
+		// console.log(evt);
 		if (evt.key == 'd') {
 			handleDelete();
+		}
+
+		if (evt.key == 'Escape' && newTask) {
+			closeCreateTaskDialog()
 		}
 	}
 
 	function handleDelete() {
 		if (curTask) {
+			removeTask(curTask)
 			// console.log(curTask, tasks)
-			const index= tasks.findIndex(t=>t===curTask);
-			tasks.splice(index,1);
-				allocateTasks();
+			
+				// allocateTasks();
 		}
 	}
 
 	onMount(() => {
+		// TODO: remove in onDestroy?
 		document.addEventListener('keydown', handleKeydown);
 	});
 
 	$: { 
-		tasks = data.tasks
-		console.log(data)
+		tasks = $taskStore;
+		console.log(tasks)
 		if (tasks)
 			allocateTasks(); 
 	}
@@ -112,6 +108,7 @@
 </svelte:head>
 
 <div class="text-column">
+	{$taskStore?.length}
 	
 	<button class="new-task" on:click={showCreateTaskDialog}>new task</button>
 	
@@ -120,7 +117,7 @@
 		<div class="dialog">
 			<h3>Create new print task</h3>
 			<div>
-				<label>title</label><input type=text bind:value={newTask.title} />
+				<label>title</label><input autofocus type=text bind:value={newTask.title} />
 			</div>
 			<div>
 				<label>hours</label><input type=number bind:value={newTask.hours} min=0 step=0.5 />
