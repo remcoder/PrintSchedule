@@ -2,8 +2,11 @@
 <script>
   import { onMount } from 'svelte';
   import { Day } from './day';
-	import { tasks as taskStore, removeTask, addTask } from '$lib/stores';
+	import { tasks as taskStore, removeTask, addTask 
+	} from '$lib/stores';
 
+	import { lookupColor } from '$lib/palette';
+	
 	let tasks = [];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 	const curDayIndex = new Date().getDay();
@@ -145,10 +148,12 @@
 					<div class="task" class:hover={task == curTask} 
 						on:mouseenter={e=>curTask = task}
 						on:mouseleave={e=>curTask = undefined}
-						style="background-color: {task.cssColor}; 
+						style="background-color: {lookupColor(task.cssColor)}; 
 						height: {task.hours*pxPerHour}px;
-						margin-top: {prepTime*pxPerHour}px">{task.title}<br>
-					time:{task.hours}h</div>
+						margin-top: {prepTime*pxPerHour}px">
+						<!-- {task.title}<br>
+						time: {task.hours}h -->
+						</div>
 				{/each}
 			</div>
 				<div class="footer">print time {curDay.allocatedTime}
@@ -198,10 +203,15 @@ button.new-task {
 }
 
 .task {
-	border: 1px solid black;
+	/* border-radius: 10px; */
+	/* border: 3px solid dimgrey; */
 	box-sizing: border-box;
 	overflow: hidden;
 	padding: 5px;
+	/* filter: brightness(250%) grayscale(30%); */
+	text-align:center;
+	color: white;
+	font-size: 90%;
 }
 
 .task.hover {
@@ -211,13 +221,14 @@ button.new-task {
 .day-box {
 	margin-bottom: 40px;
 	margin-right: 20px;
-	background-color: lightgrey;
-	max-width: 270px;
+	width: 270px;
 }
+
 .day {
 	xoverflow: hidden;
-	padding: 10px;
-
+	background-color: #D9D9D9;
+	/* outline: 1px solid black; */
+	/* padding: 10px; */
 }
 
 main {
