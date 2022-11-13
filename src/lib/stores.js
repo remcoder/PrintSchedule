@@ -3,7 +3,7 @@ import { writable, get } from 'svelte/store';
 // inspired by https://www.reddit.com/r/sveltejs/comments/s8rsx9/where_to_put_api_calls_stores/
 
 const url = 'https://api.jsonbin.io/v3/b/637028842b3499323bfdf65c';
-const key = '$2b$10$nx98SJtY6./KHIjxp99PNuGvDnTMkCZsX4pJLuu6Jfub8/.7lhw0C';
+const key = '';
 const headers = {
 	Accept: 'application/json, text/plain',
 	'Content-Type': 'application/json',
