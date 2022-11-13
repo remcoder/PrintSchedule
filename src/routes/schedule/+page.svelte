@@ -130,12 +130,12 @@
 </script>
 
 <svelte:head>
-	<title>Print Queue</title>
+	<title>Print Schedule</title>
 	<meta name="description" content="Manage tasks" />
 </svelte:head>
 
 <div class="text-column">
-	
+	<h1>Schedule</h1>
 	<button class="new-task" on:click={showCreateTaskDialog}>+ new task</button>
 	
 	{#if newTask}
