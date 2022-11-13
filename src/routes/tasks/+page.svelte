@@ -108,7 +108,6 @@
 </svelte:head>
 
 <div class="text-column">
-	{$taskStore?.length}
 	
 	<button class="new-task" on:click={showCreateTaskDialog}>new task</button>
 	
