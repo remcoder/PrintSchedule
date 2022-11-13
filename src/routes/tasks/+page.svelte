@@ -2,8 +2,7 @@
 <script>
   import { onMount } from 'svelte';
   import { Day } from './day';
-	import { tasks as taskStore, removeTask, addTask 
-	} from '$lib/stores';
+	import { tasks as taskStore, removeTask, addTask, updateTask } from '$lib/stores';
 
 	import { lookupColor } from '$lib/palette';
 	
@@ -14,10 +13,12 @@
 	const prepTime = 0.5;
 	const minDays = 5;
 	const dayLength = 12;
+	const skippedDays = [];
 	// const totalPrintTime = tasks.map(t=>t.hours).reduce((acc,next) => acc+next ,0);
 	const pxPerHour = 30;
 
 	let newTask = undefined;
+	let editTask = undefined;
 	let curTask = undefined;
 	let plannedDays = [];
 
@@ -74,6 +75,7 @@
 
 	function closeCreateTaskDialog() {
 		newTask = undefined;
+		editTask = undefined;
 	}
 
 	function createTask() {
@@ -101,6 +103,19 @@
 		}
 	}
 
+	function showEditTaskDialog(task, dayIndex, taskIndex) {
+		console.log('editing', task);
+		
+		editTask = newTask = task;
+		// plannedDays[dayIndex].tasks[taskIndex]
+		// updateTask(task);
+	}
+
+	function saveTask() {
+		updateTask(editTask, newTask);
+		editTask = undefined;
+		newTask = undefined;
+	}
 	onMount(() => {
 		// TODO: remove in onDestroy?
 		document.addEventListener('keydown', handleKeydown);
@@ -121,12 +136,12 @@
 
 <div class="text-column">
 	
-	<button class="new-task" on:click={showCreateTaskDialog}>new task</button>
+	<button class="new-task" on:click={showCreateTaskDialog}>+ new task</button>
 	
 	{#if newTask}
 		<div class="glasspane" on:click={closeCreateTaskDialog} />
 		<div class="dialog">
-			<h3>Create new print task</h3>
+			<h3>{ editTask? 'Edit' : 'Create new'} print task</h3>
 			<div>
 				<label>title</label><input autofocus type=text bind:value={newTask.title} />
 			</div>
@@ -143,7 +158,11 @@
 			</div>
 
 			<button on:click={closeCreateTaskDialog}>cancel</button>
-			<button on:click={createTask}>create task</button>
+			{#if editTask}
+				<button on:click={saveTask}>save task</button>
+			{:else}
+				<button on:click={createTask}>create task</button>
+			{/if}
 		</div>
 	{/if}
 
@@ -153,10 +172,11 @@
 			<header>{getWeekDay(dayIndex)} </header>
 			<div class="day" style="height: {pxPerHour * dayLength}px;">
 
-				{#each curDay.tasks as task}
+				{#each curDay.tasks as task, taskIndex}
 					<div class="task" class:hover={task == curTask} 
 						on:mouseenter={e=>curTask = task}
 						on:mouseleave={e=>curTask = undefined}
+						on:click={ e=> showEditTaskDialog(curTask, dayIndex, taskIndex)}
 						style="background-color: {lookupColor(task.cssColor)}; 
 						height: {task.hours*pxPerHour}px;
 						margin-top: {prepTime*pxPerHour}px">

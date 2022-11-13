@@ -50,6 +50,17 @@ export async function addTask(task) {
 	updateTasks(update);
 }
 
+export async function updateTask(oldTask, newTask) {
+	const update = (tasks) => {
+		let newTasks = [...tasks];
+		const index = newTasks.findIndex((t) => t === oldTask);
+		newTasks[index] = newTask;
+		return newTasks;
+	};
+
+	updateTasks(update);
+}
+
 function updateTasks(update) {
 	tasks.update(update);
 
