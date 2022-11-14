@@ -1,4 +1,5 @@
-import { writable, get } from 'svelte/store';
+import { writable, get, type Updater, type Writable } from 'svelte/store';
+import type { Task } from './task';
 
 // inspired by https://www.reddit.com/r/sveltejs/comments/s8rsx9/where_to_put_api_calls_stores/
 
@@ -12,7 +13,7 @@ const headers = {
 	'X-Master-Key': key
 };
 
-export let tasks = writable([]);
+export let tasks = writable([] as Task[]);
 
 export async function loadTasks() {
 	const resp = await fetch(url, {
@@ -29,8 +30,8 @@ export async function loadTasks() {
 
 loadTasks();
 
-export async function removeTask(task) {
-	const update = (tasks) => {
+export async function removeTask(task: Task) {
+	const update = (tasks: Task[]) => {
 		let newTasks = [...tasks];
 		const index = newTasks.findIndex((t) => t === task);
 		newTasks.splice(index, 1);
@@ -40,8 +41,8 @@ export async function removeTask(task) {
 	updateTasks(update);
 }
 
-export async function addTask(task) {
-	const update = (tasks) => {
+export async function addTask(task: Task) {
+	const update = (tasks: Task[]) => {
 		let newTasks = [...tasks];
 		newTasks.push(task);
 		return newTasks;
@@ -50,8 +51,8 @@ export async function addTask(task) {
 	updateTasks(update);
 }
 
-export async function updateTask(oldTask, newTask) {
-	const update = (tasks) => {
+export async function updateTask(oldTask: Task, newTask: Task) {
+	const update = (tasks: Task[]) => {
 		let newTasks = [...tasks];
 		const index = newTasks.findIndex((t) => t === oldTask);
 		newTasks[index] = newTask;
@@ -61,7 +62,7 @@ export async function updateTask(oldTask, newTask) {
 	updateTasks(update);
 }
 
-function updateTasks(update) {
+function updateTasks(update: Updater<Task[]>) {
 	tasks.update(update);
 
 	let body = JSON.stringify({

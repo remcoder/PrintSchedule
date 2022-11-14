@@ -1,9 +1,9 @@
-<script>
+<script lang=ts>
   import { tasks, removeTask } from '$lib/stores';
   import { lookupColor } from '$lib/palette';
   import TaskDialog from '$lib/TaskDialog.svelte';
 
-  let dialog;
+  let dialog : TaskDialog;
 </script>
 
 <svelte:head>
@@ -18,9 +18,11 @@
 <table>
   {#each $tasks as task}
     <tr style="background-color: {lookupColor(task.cssColor)};">
-      <td on:click={dialog.showEditTaskDialog(task)}>{task.title}</td>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <td on:click={() => dialog.showEditTaskDialog(task)}>{task.title}</td>
       <td>{task.hours}</td>
-      <td on:click={removeTask(task)} class="button-delete">X</td>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <td on:click={() => removeTask(task)} class="button-delete">X</td>
     </tr>
   {/each}
 </table>

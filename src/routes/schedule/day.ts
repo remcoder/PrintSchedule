@@ -1,15 +1,17 @@
+import type { Task } from "$lib/task";
+
 export class Day {
 	hours;
 	allocatedTime = 0;
-	tasks = [];
+	tasks : Task[] = [];
 
-	constructor(hours) {
+	constructor(hours: number) {
 		this.hours = hours;
 	}
 
-	add(task) {
+	add(task: Task) {
 		this.tasks.push(task);
-		this.allocatedTime += task.prepTime + task.hours;
+		this.allocatedTime += task.prepTime ?? 0 + task.hours;
 	}
 
 	get timeLeft() {

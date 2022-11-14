@@ -1,14 +1,16 @@
 
-<script>
-  import { onMount } from 'svelte';
-  import { Day } from './day';
-	import { tasks as taskStore, removeTask, addTask, updateTask } from '$lib/stores';
+<script lang=ts>
+	import type { Task } from '$lib/task';
+  	import { onMount } from 'svelte';
+  	import { Day } from './day';
+	import { tasks as taskStore, removeTask } from '$lib/stores';
 
 	import TaskDialog from '$lib/TaskDialog.svelte';
 	import { lookupColor } from '$lib/palette';
 	
-	let dialog ;
-	let tasks = [];
+	
+	let dialog : TaskDialog;
+	let tasks: Task[] = [];
 	const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 	const curDayIndex = new Date().getDay();
 	const weekDay = weekDays[curDayIndex];
@@ -20,8 +22,8 @@
 	const pxPerHour = 30;
 
 	
-	let curTask = undefined;
-	let plannedDays = [];
+	let curTask : Task | undefined;
+	let plannedDays : Day[] = [];
 
 	function allocateTasks() {
 		plannedDays = [];
@@ -44,7 +46,7 @@
 		plannedDays = plannedDays;
 	}
 
-	function allocate(task, day) {
+	function allocate(task : Task, day : Day) {
 		// console.log('allocating', task, day)
 		const i = tasks.findIndex(t=>t === task);
 		if (i == -1) throw new Error('cannot find task')
@@ -52,7 +54,7 @@
 		day.add(task);
 	}
 
-	function findDay(task) {
+	function findDay(task: Task) {
 		for(const day of plannedDays) {
 			// console.log('for task' , task, ' considering day', day);
 			if (day.timeLeft >= (task.prepTime ?? prepTime) + task.hours) { // TODO: put preptime centrally 
@@ -62,29 +64,19 @@
 		return undefined;
 	}
 
-	function getWeekDay(index) {
+	function getWeekDay(index: number) {
 		return weekDays [(curDayIndex + index) % 7];
 	}
 
-
-
-	function handleKeydown(evt) {
-		// console.log(evt);
+	function handleKeydown(evt: KeyboardEvent) {
 		if (evt.key == 'd') {
 			handleDelete();
-		}
-
-		if (evt.key == 'Escape' && newTask) {
-			closeCreateTaskDialog()
 		}
 	}
 
 	function handleDelete() {
 		if (curTask) {
 			removeTask(curTask)
-			// console.log(curTask, tasks)
-			
-				// allocateTasks();
 		}
 	}
 
@@ -96,7 +88,6 @@
 
 	$: { 
 		tasks = $taskStore;
-		// console.log(tasks);
 		if (tasks)
 			allocateTasks(); 
 	}
@@ -119,10 +110,11 @@
 			<div class="day" style="height: {pxPerHour * dayLength}px;">
 
 				{#each curDay.tasks as task, taskIndex}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<div class="task" class:hover={task == curTask} 
 						on:mouseenter={e=>curTask = task}
 						on:mouseleave={e=>curTask = undefined}
-						on:click={ e=> dialog.showEditTaskDialog(curTask, dayIndex, taskIndex)}
+						on:click={ e=> dialog.showEditTaskDialog(task)}
 						style="background-color: {lookupColor(task.cssColor)}; 
 						height: {task.hours*pxPerHour}px;
 						margin-top: {prepTime*pxPerHour}px">

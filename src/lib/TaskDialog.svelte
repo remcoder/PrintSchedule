@@ -1,15 +1,15 @@
-<script>
+<script lang=ts>
   import { onMount } from 'svelte';
   import { addTask, updateTask } from '$lib/stores';
-  let newTask = undefined;
-	let editTask = undefined;
-
+	import type { Task } from './task';
+  	let newTask : Task | undefined;
+	let editTask : Task | undefined;
 
 	function showCreateTaskDialog() {
 		newTask = {
 			title: '',
 			hours: 1,
-			cssColors : 'red'
+			cssColor : 'red'
 		};
 	}
 
@@ -19,23 +19,23 @@
 	}
 
 	function createTask() {
-		addTask(newTask);
+		addTask(newTask as Task);
 		newTask = undefined;
 	}
 
-  export function showEditTaskDialog(task, dayIndex, taskIndex) {
+  export function showEditTaskDialog(task: Task) {
 		console.log('editing', task);
 		
 		editTask = newTask = task;
 	}
 
 	function saveTask() {
-		updateTask(editTask, newTask);
+		updateTask(editTask as Task, newTask as Task);
 		editTask = undefined;
 		newTask = undefined;
 	}
 
-  function handleKeydown(evt) {
+  function handleKeydown(evt: KeyboardEvent) {
 		
 		if (evt.key == 'Escape' && newTask) {
 			closeCreateTaskDialog()

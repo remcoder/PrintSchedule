@@ -1,4 +1,6 @@
-export const palette = {
+export type Color = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' |'brown' | 'black' | 'white' | 'grey';
+
+export const palette : { [Key in Color]: string } = {
 	red: '#EB3030',
 	orange: '#FCAD36',
 	yellow: '#D0C668',
@@ -11,6 +13,6 @@ export const palette = {
 	grey: '#959595'
 };
 
-export function lookupColor(color) {
+export function lookupColor(color : Color) {
 	return palette[color] ?? color;
 }
