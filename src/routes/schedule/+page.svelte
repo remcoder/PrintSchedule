@@ -17,6 +17,7 @@
 	const prepTime = 0.5;
 	const minDays = 5;
 	const dayLength = 12;
+	const hoursPerDay = [...Array(dayLength).keys()];
 	const skippedDays = [];
 	// const totalPrintTime = tasks.map(t=>t.hours).reduce((acc,next) => acc+next ,0);
 	const pxPerHour = 30;
@@ -104,10 +105,33 @@
 	<TaskDialog bind:this={dialog} />
 
 	<main>
+		<!-- <div class="day-box">
+			<header>&nbsp;</header>
+			<div class="day" style="height: {pxPerHour * dayLength}px; background-color: #f5f5f5; width:20px" >
+				{#each hoursPerDay as hour}
+					<div class="hour"
+					style="height: {pxPerHour}px; top: {hour*pxPerHour}px;">
+					{hour+1}
+				</div>
+				{/each}
+			</div>
+		</div> -->
+
 		{#each plannedDays as curDay, dayIndex}
 			<div class="day-box">
-			<header>{getWeekDay(dayIndex)} </header>
+			<header>{getWeekDay(dayIndex)}</header>
 			<div class="day" style="height: {pxPerHour * dayLength}px;">
+
+				<div>
+					{#each hoursPerDay as hour}
+						<div class="hour"
+						style="height: {pxPerHour}px; top: {hour*pxPerHour}px;">
+						{#if dayIndex == 0}
+							<div class="hourNumber">{hour+1}</div>
+						{/if}
+					</div>
+					{/each}
+				</div>
 
 				{#each curDay.tasks as task, taskIndex}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -123,12 +147,12 @@
 						</div>
 				{/each}
 			</div>
-				<div class="footer">
+				<!-- <div class="footer">
 				{curDay.allocatedTime}h of print time 
-				<!-- {#if curDay.timeLeft}
+				{#if curDay.timeLeft}
 					{curDay.timeLeft}h unused
-				{/if} -->
-				</div>
+				{/if} 
+				</div>-->
 			</div>
 		{/each}
 	</main>
@@ -138,16 +162,18 @@
 <style>
 
 .task {
-	/* border-radius: 10px; */
+	border-radius: 5px;
 	/* border: 3px solid dimgrey; */
 	box-sizing: border-box;
 	overflow: hidden;
-	padding: 5px 0;
+	padding: 5px 5px;
 	/* filter: brightness(250%) grayscale(30%); */
 	text-align:center;
 	color: #eee;
 	font-size: 90%;
-	
+	z-index: 1;
+	width: 90%;;
+	margin-left: 18px;
 }
 
 .task.hover {
@@ -161,13 +187,39 @@
 }
 
 .day {
-	xoverflow: hidden;
-	background-color: #D9D9D9;
+	background-color: #e9e9e9;
 	display: flex;
 	flex-direction: column;
 	/* outline: 1px solid black; */
 	/* padding: 10px; */
-	margin: 20px 0
+	margin: 20px 0;
+	position: relative;
+}
+
+.hour {
+	position: absolute;
+	border: 1px solid rgb(209, 209, 209);
+	border-bottom: 0;
+	width: 100%;
+	box-sizing: border-box;
+	z-index: 0;
+	text-align: right;
+	padding-right: 25px;
+}
+.hour:last-child {
+	border: 1px solid rgb(209, 209, 209);
+}
+
+.hourNumber {
+	text-align: left;
+	position: relative;
+	left: -25px;
+	top: 18px;
+	color: rgb(162, 161, 161);
+}
+
+.day-box:last-child .hour {
+	width: 100%;
 }
 
 main {
