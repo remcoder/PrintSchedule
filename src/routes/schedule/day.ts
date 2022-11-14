@@ -11,7 +11,7 @@ export class Day {
 
 	add(task: Task) {
 		this.tasks.push(task);
-		this.allocatedTime += task.prepTime ?? 0 + task.hours;
+		this.allocatedTime += (task.prepTime ?? 0) + task.hours;
 	}
 
 	get timeLeft() {

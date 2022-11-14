@@ -5,7 +5,7 @@ import type { Task } from './task';
 
 const url = 'https://api.jsonbin.io/v3/b/637028842b3499323bfdf65c';
 const key = import.meta.env.VITE_BACKEND_KEY;
-console.log('key', key);
+// console.log('key', key);
 
 const headers = {
 	Accept: 'application/json, text/plain',
