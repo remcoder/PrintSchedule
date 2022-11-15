@@ -106,6 +106,7 @@ button.new-task:hover {
 	top:0;
 	left:0;
 	background-color: rgba(0,0,0,0.5);
+	z-index: 9999;
 }
 .dialog {
 	z-index: 1;
@@ -117,6 +118,7 @@ button.new-task:hover {
 	padding: 20px;
 
 	text-align: center;
+	z-index: 9999;
 }
 
 .dialog label {
