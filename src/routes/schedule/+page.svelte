@@ -99,65 +99,63 @@
 	<meta name="description" content="Manage tasks" />
 </svelte:head>
 
-<div class="text-column">
-	<h1>Schedule</h1>
-	
-	<TaskDialog bind:this={dialog} />
+<h1>Schedule</h1>
 
-	<main>
-		<!-- <div class="day-box">
-			<header>&nbsp;</header>
-			<div class="day" style="height: {pxPerHour * dayLength}px; background-color: #f5f5f5; width:20px" >
+<TaskDialog bind:this={dialog} />
+
+<main>
+	<!-- <div class="day-box">
+		<header>&nbsp;</header>
+		<div class="day" style="height: {pxPerHour * dayLength}px; background-color: #f5f5f5; width:20px" >
+			{#each hoursPerDay as hour}
+				<div class="hour"
+				style="height: {pxPerHour}px; top: {hour*pxPerHour}px;">
+				{hour+1}
+			</div>
+			{/each}
+		</div>
+	</div> -->
+
+	{#each plannedDays as curDay, dayIndex}
+		<div class="day-box">
+		<header>{getWeekDay(dayIndex)}</header>
+		<div class="day" style="height: {pxPerHour * dayLength}px;">
+
+			<div>
 				{#each hoursPerDay as hour}
 					<div class="hour"
 					style="height: {pxPerHour}px; top: {hour*pxPerHour}px;">
-					{hour+1}
+					{#if dayIndex == 0}
+						<div class="hourNumber">{hour+1}</div>
+					{/if}
 				</div>
 				{/each}
 			</div>
-		</div> -->
 
-		{#each plannedDays as curDay, dayIndex}
-			<div class="day-box">
-			<header>{getWeekDay(dayIndex)}</header>
-			<div class="day" style="height: {pxPerHour * dayLength}px;">
-
-				<div>
-					{#each hoursPerDay as hour}
-						<div class="hour"
-						style="height: {pxPerHour}px; top: {hour*pxPerHour}px;">
-						{#if dayIndex == 0}
-							<div class="hourNumber">{hour+1}</div>
-						{/if}
+			{#each curDay.tasks as task, taskIndex}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div class="task" class:hover={task == curTask} 
+					on:mouseenter={e=>curTask = task}
+					on:mouseleave={e=>curTask = undefined}
+					on:click={ e=> dialog.showEditTaskDialog(task)}
+					style="background-color: {lookupColor(task.cssColor)}; 
+					height: {task.hours*pxPerHour}px;
+					margin-top: {prepTime*pxPerHour}px">
+					{task.title}
+					<!-- time: {task.hours}h  -->
 					</div>
-					{/each}
-				</div>
+			{/each}
+		</div>
+			<!-- <div class="footer">
+			{curDay.allocatedTime}h of print time 
+			{#if curDay.timeLeft}
+				{curDay.timeLeft}h unused
+			{/if} 
+			</div>-->
+		</div>
+	{/each}
+</main>
 
-				{#each curDay.tasks as task, taskIndex}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<div class="task" class:hover={task == curTask} 
-						on:mouseenter={e=>curTask = task}
-						on:mouseleave={e=>curTask = undefined}
-						on:click={ e=> dialog.showEditTaskDialog(task)}
-						style="background-color: {lookupColor(task.cssColor)}; 
-						height: {task.hours*pxPerHour}px;
-						margin-top: {prepTime*pxPerHour}px">
-						{task.title}
-						<!-- time: {task.hours}h  -->
-						</div>
-				{/each}
-			</div>
-				<!-- <div class="footer">
-				{curDay.allocatedTime}h of print time 
-				{#if curDay.timeLeft}
-					{curDay.timeLeft}h unused
-				{/if} 
-				</div>-->
-			</div>
-		{/each}
-	</main>
-
-</div>
 
 <style>
 
