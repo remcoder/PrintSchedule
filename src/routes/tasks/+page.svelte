@@ -41,11 +41,16 @@
 <TaskDialog bind:this={dialog} />
 
 <table>
+  <tr>
+    <th>hours</th>
+    <th>title</th>
+    <th colspan="3">action</th>
+  </tr>
   {#each $tasks as task, index}
-    <tr style="background-color: {lookupColor(task.cssColor)};">
+    <tr >
+      <td class="hours">{task.hours}</td>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <td on:click={() => dialog.showEditTaskDialog(task)}>{task.title}</td>
-      <td>{task.hours}</td>
+      <td class="title" style="background-color: {lookupColor(task.cssColor)};" on:click={() => dialog.showEditTaskDialog(task)}>{task.title}</td>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <td on:click={() => (index > 0) && moveTask(task, -1)} class="action">▲</td>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -57,10 +62,20 @@
 </table>
 
 <style>
+  th {
+    text-align: left;
+    /* font-weight: normal; */
+    xtext-decoration: underline;
+  }
   td {
+    border-radius: 5px;
+    border: 1px solid grey;
+  }
+  td.title {
     padding: 5px;
     color: #eee;
     background-color: inherit;
+    border: 0;
   }
 
   td:hover {
@@ -70,9 +85,13 @@
     text-align: center;
     width: 24px;
   }
+  .hours {
+    padding: 5px;
+    width: 50px
+  }
 
   .button-delete {
     text-align: center;
-    background-color: gray;
+    xbackground-color: gray;
   }
 </style>
