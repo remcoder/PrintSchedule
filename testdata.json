@@ -1,0 +1,72 @@
+{
+    "record": {
+        "tasks": [
+            {
+                "title": "Urn XXL PLA Red Pinewood ",
+                "hours": 3.5,
+                "cssColor": "red",
+                "prepTime": 0.5
+            },
+            {
+                "title": "Urn XXL PLA Red Pinewood Top",
+                "hours": 2,
+                "cssColor": "red",
+                "prepTime": 0.5
+            },
+            {
+                "title": "Urn XXL PLA Red Pinewood Extra",
+                "hours": 1.5,
+                "cssColor": "red",
+                "prepTime": 0.5
+            },
+            {
+                "title": " Botto flip",
+                "hours": 4,
+                "cssColor": "brown",
+                "prepTime": 0.5
+            },
+            {
+                "title": "Urn XL PLA green Pinewood Bottom",
+                "hours": 2,
+                "cssColor": "green",
+                "prepTime": 0.5
+            },
+            {
+                "title": "Print Money",
+                "hours": 3,
+                "cssColors": "red",
+                "cssColor": "green",
+                "prepTime": 0.5
+            },
+            {
+                "title": "This is an unscheduled buffer section",
+                "hours": 6,
+                "cssColors": "red",
+                "cssColor": "red",
+                "prepTime": 0.5
+            },
+            {
+                "title": "sorry your feedback got deleted accidentally :-(",
+                "hours": 1.5,
+                "cssColors": "red",
+                "cssColor": "orange",
+                "prepTime": 0.5
+            },
+            {
+                "title": "je moeder!",
+                "hours": 7,
+                "cssColor": "green"
+            },
+            {
+                "title": "je vader!",
+                "hours": 7,
+                "cssColor": "blue"
+            }
+        ]
+    },
+    "metadata": {
+        "id": "637028842b3499323bfdf65c",
+        "private": true,
+        "createdAt": "2022-11-12T23:13:08.493Z"
+    }
+}
