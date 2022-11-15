@@ -62,7 +62,7 @@ export async function updateTask(oldTask: Task, newTask: Task) {
 	updateTasks(update);
 }
 
-function updateTasks(update: Updater<Task[]>) {
+export function updateTasks(update: Updater<Task[]>) {
 	tasks.update(update);
 
 	let body = JSON.stringify({
