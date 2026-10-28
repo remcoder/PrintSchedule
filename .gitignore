@@ -8,3 +8,11 @@ node_modules
 !.env.example
 .vercel
 .output
+
+# added by meta .gitignore audit
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.log
+.idea/
